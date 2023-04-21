@@ -8,5 +8,11 @@ function login() {
         id : id.value,
         psword: psword.value,
     };
+
     console.log(req);
+    console.log(JSON.stringify(req));
+
+    fetch("/login", {
+        Body : JSON.stringify(req)
+    })
 }
