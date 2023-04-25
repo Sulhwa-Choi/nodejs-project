@@ -7,6 +7,9 @@ const registerBtn = document.querySelector("#button");
 
 registerBtn.addEventListener("click",register);
 function register() {
+    if (psword.value != confirmPsword.value) {
+        return alert("비밀번호가 일치하지 않습니다.")
+    }
     const req = {
         id : id.value,
         name : name.value,
@@ -28,7 +31,7 @@ function register() {
         .then((res) => {
             console.log(res);
             if (res.success) {
-                location.href = "/";
+                location.href = "/login";
             } else {
                 alert(res.msg);
             }
