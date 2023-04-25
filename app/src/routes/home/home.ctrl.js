@@ -17,9 +17,14 @@ const output = {
 
 
 const process = {
-    login : (req, res) => {
+    login : async (req, res) => {
         const user = new User(req.body); // User class를 인스턴스화 할때 req.body의 값을 들고 생성됨
-        const response = user.login();
+        const response = await user.login();
+        return res.json(response);
+    },
+    register : (req, res) => {
+        const user = new User(req.body); // User class를 인스턴스화 할때 req.body의 값을 들고 생성됨
+        const response = user.register();
         return res.json(response);
     },
 }

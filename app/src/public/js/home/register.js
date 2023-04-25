@@ -7,9 +7,9 @@ const registerBtn = document.querySelector("#button");
 
 registerBtn.addEventListener("click",register);
 function register() {
-    if (psword.value != confirmPsword.value) {
-        return alert("비밀번호가 일치하지 않습니다.")
-    }
+    if (!id.value) return alert("아이디를 입력해주세요");
+    if (psword.value != confirmPsword.value) return alert("비밀번호가 일치하지 않습니다.");
+    
     const req = {
         id : id.value,
         name : name.value,

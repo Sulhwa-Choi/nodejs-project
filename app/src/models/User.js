@@ -7,9 +7,16 @@ class User {
         this.body = body;
     }
 
-    login() {
+    async login() {
         const client = this.body;
-        const {id, psword} = UserStorage.getUserInfo(client.id);
+        const {id,psword} = await UserStorage.getUserInfo(client.id);
+
+        // console.log(UserStorage.getUserInfo(client.id)); 
+        // --> Promise { <pending> } 출력
+        // promise를 반환하는 애는 일반적으로 시간이 소요가 됨
+        // 그래서 promise 데이터를 다 읽어오지 못해서  pending이 찍힘
+        // 데이터를 다 읽어올때까지 기다리라는 await을 써주면 되는데, 얘는 async 함수 안에서만 사용가능함
+
         if (id) {
             if (id === client.id && psword === client.psword) {
                 return {success : true};
@@ -21,7 +28,8 @@ class User {
 
     register() {
         const client = this.body;
-        UserStorage.save(client);
+        const response = UserStorage.save(client);
+        return response
     }
 }
 
