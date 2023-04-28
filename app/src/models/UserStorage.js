@@ -1,71 +1,28 @@
 "use strict";
 
-const fs = require("fs").promises;
+const db = require("../config/db");
 
 class UserStorage {
-    static #getUserInfo(data, id) {
-        const users = JSON.parse(data);
-        const idx = users.id.indexOf(id);
-        const userKeys = Object.keys(users); // user의 키값들만 배열로 만듦
-        const userInfo = userKeys.reduce((newUser , info) => {
-            newUser[info] = users[info][idx];
-            return newUser;
-        }, {});
-
-        return userInfo;
-    }
-
-    static #getUsers(data, isAll, fields) {
-        const users = JSON.parse(data);
-        if (isAll) return users;
-        const newUsers = fields.reduce((newUsers, field) =>{
-            if (users.hasOwnProperty(field)) {
-                newUsers[field] = users[field];
-            }
-            return newUsers;
-        }, {});
-        return newUsers;
-    }
-
-    static getUsers(isAll, ...fields) {
-        //const users = this.#users;
-        return fs
-        .readFile("./src/databases/users.json")
-        .then((data) => {
-            return this.#getUsers(data, isAll, fields);
-        })
-        .catch((err) => console.error(err));
-
-        
-
-        
-    }
 
     static getUserInfo(id) {
-        //const users = this.#users;
-        return fs
-            .readFile("./src/databases/users.json")
-            .then((data) => {
-                return this.#getUserInfo(data, id);
-            })
-            .catch((err) => console.error(err));
-
+        // Promise안에 있는 구문이 성공하면 resolve를 실행, 실패하면 reject 실행
+        return new Promise((resolve, reject) => {
+            const query = "select * from users where id = ?";
+            db.query(query, [id] , (err,data) => {
+                if (err) reject(err); // db 쿼리를 실행시 에러나면 -> err를 던짐
+                resolve(data[0]); // 성공하면 resolve(data);
+            });
+        });
     }
 
-    
-
     static async save(userInfo) {
-        // 기존 데이터를 불러오고 그 데이터에 새로운 user 데이터를 추가해서 저장해야함
-        // 그렇지 않으면 기존데이터에 새 user데이터가 덮어씌이게됨
-        const users = await this.getUsers(true);
-        if (users.id.includes(userInfo.id)) {
-            throw "이미 존재하는 아이디입니다.";
-        }
-        users.id.push(userInfo.id);
-        users.name.push(userInfo.name);
-        users.psword.push(userInfo.psword);
-        fs.writeFile("./src/databases/users.json",JSON.stringify(users));
-        return {success : true};
+        return new Promise((resolve, reject) => {
+            const query = "insert into users(id, name, psword) values (?,?,?)";
+            db.query(query, [userInfo.id, userInfo.name, userInfo.psword] , (err) => {
+                if (err) reject(`${err}`); // Object objec으로 뜨기때문에 err를 저렇게 처리해야함
+                resolve({ success : true }); 
+            });
+        });
     }
 
 }
