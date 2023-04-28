@@ -1,14 +1,11 @@
 "use strict"
 
 const express = require("express");
-const app = express();
+const bodyParser = require("body-parser");
 const dotenv = require("dotenv"); // 환경변수 세팅 관리용
 dotenv.config();
 
-
-//const bodyParser = require("body-parser");
-
-const port = 3000;
+const app = express();
 
 // 라우팅
 const home = require("./src/routes/home");
@@ -26,7 +23,6 @@ app.use(bodyParser.urlencoded({extendede : true}));
 */
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-
 app.use("/",home); // use : 미들웨어를 등록해주는 메서드
 
 module.exports = app;
